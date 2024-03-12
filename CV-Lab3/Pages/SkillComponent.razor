@@ -1,0 +1,93 @@
+﻿@page "/skills"
+@inject SkillService skillService
+@inject ProjectService projectService
+
+
+
+
+<div>
+    <img src="Oliver1.jpg" alt="Oliver Brage" style="width: 200px; height: 200px;" />
+    <p>Oliver Brage, a 30-year-old individual, is currently immersed in the pursuit of becoming a proficient .NET Cloud developer. Driven by a passion for technology and innovation, Oliver is dedicated to mastering the intricacies of cloud computing within the .NET framework. With an insatiable curiosity and a penchant for problem-solving, he navigates the complexities of software development with enthusiasm and determination. Through rigorous study and hands-on experience, Oliver endeavors to carve out a successful career in the ever-evolving realm of cloud-based application development.</p>
+</div>
+
+
+<h3>Skills</h3>
+
+
+@if (skills != null && skills.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Technology</th>
+                <th>Years of Experience</th>
+                <th>Skill Level</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var skill in skills)
+            {
+                <tr>
+                    <td>@skill.Technology</td>
+                    <td>@skill.YearsOfExperience</td>
+                    <td>@skill.SkillLevel</td>
+                    <td>
+                        <button @onclick="() => EditSkill(skill)">Edit</button>
+                        <button @onclick="() => DeleteSkill(skill.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No skills found.</p>
+}
+
+
+<h4>Add New Skill</h4>
+<form @onsubmit="AddSkill">
+    <label>Technology:</label>
+    <input type="text" @bind="newSkill.Technology" />
+    <br />
+    <label>Years of Experience:</label>
+    <input type="number" @bind="newSkill.YearsOfExperience" />
+    <br />
+    <label>Skill Level:</label>
+    <input type="number" @bind="newSkill.SkillLevel" />
+    <br />
+    <button type="submit">Add Skill</button>
+</form>
+
+
+
+@code {
+    List<Skill> skills;
+    Skill newSkill = new Skill();
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        skills = await skillService.GetSkills();
+    }
+
+    private async Task AddSkill()
+    {
+        await skillService.AddSkill(newSkill);
+        skills = await skillService.GetSkills();
+        newSkill = new Skill(); 
+    }
+
+    private async Task EditSkill(Skill skill)
+    {
+        
+    }
+
+    private async Task DeleteSkill(int id)
+    {
+        await skillService.DeleteSkill(id);
+        skills = await skillService.GetSkills();
+    }
+}
